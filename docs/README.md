@@ -10,7 +10,7 @@ Compatibilidade é por funcionalidade e versão de referência, não uma promess
 
 ## Ordem das especificações
 
-O roteiro apresenta as entregas. Os critérios de teste se aplicam desde a fundação. O contrato de regressão orienta a implementação dos pacotes seguintes. As extensões de classificação e validação cruzada descritas nesses pacotes entram depois do primeiro ciclo de benchmarks.
+O roteiro apresenta as entregas. Os critérios de teste e manutenção dos [exemplos documentados](../examples/README.md) se aplicam a cada feature. As specs registram contratos, validação e diferenças de compatibilidade.
 
 - [00 · Roteiro de implementação](specs/00-roteiro.md)
 - [01 · Fundação e contratos](specs/01-fundacao.md)
@@ -25,6 +25,7 @@ O roteiro apresenta as entregas. Os critérios de teste se aplicam desde a funda
 - [10 · Benchmarks de comparação com scikit-learn](specs/10-benchmarks.md)
 - [Matriz de compatibilidade inicial](compatibilidade.md)
 - [Implementação atual](implementacao.md)
+- [Exemplos documentados dos fluxos](../examples/README.md)
 
 ## Decisões e questões abertas
 
@@ -32,6 +33,6 @@ O roteiro apresenta as entregas. Os critérios de teste se aplicam desde a funda
 - **Versão Go:** mínimo declarado `go 1.22`; validado localmente com Go 1.26.1.
 - **Diretriz:** manter nomes conceituais e defaults Python; adaptar exportação, tipos estáticos e erros às regras do Go. Definir nomes de pacotes Go concretos na primeira implementação e registrar divergências, inclusive quando não preservarem underscores Python.
 - **Benchmarks:** implementados em `benchmarks/`; a comparação com scikit-learn é externa. A baseline inicial está documentada.
-- **Primeiro fluxo implementado:** dados densos `float64` e regressão de saída única. Classificação binária com LogisticRegression, métricas e pipeline também está implementada. Validação cruzada é a próxima etapa.
+- **Fluxos implementados:** regressão de saída única, classificação binária e validação cruzada estão disponíveis. Consulte os exemplos para ver o uso ponta a ponta.
 - **Dados e concorrência:** contratos públicos devem descrever cópia, aliasing, mutação e segurança concorrente; `Fit` muta o estimador e não é concorrente por padrão.
 - **Paridade aleatória:** mesma semente não garante a mesma sequência entre Go e NumPy. Só prometer paridade exata se o gerador e o algoritmo forem compatíveis e testados; caso contrário documentar a diferença.

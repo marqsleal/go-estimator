@@ -22,6 +22,8 @@ O módulo declara Go 1.22 como mínimo. A implementação foi validada nesta má
 
 `TrainTestSplit` mantém alinhados X, y e índices. `test_size` padrão é 0,25; o tamanho do conjunto de teste arredonda para cima. `shuffle` padrão é verdadeiro. `WithRandomState` aceita semente inteira de 0 a 2³²−1, incluindo zero. Cada chamada usa um gerador local e é reprodutível dentro da implementação Go; a sequência não é compatível com NumPy. Sem semente, o código obtém entropia do sistema.
 
+`KFold` retorna índices de treino e teste, distribui as amostras restantes nos primeiros folds e permite embaralhamento reprodutível. `CrossValScore` calcula R² por fold para fábricas de pipelines de regressão. `CrossValClassificationScore` calcula acurácia para fábricas de pipelines de classificação. Cada fold recebe instâncias novas e ajusta transformadores somente nos dados de treino.
+
 ### `metrics`
 
 As funções `MeanAbsoluteError`, `MeanSquaredError` e `R2Score` recebem `yTrue` antes de `yPred`, validam comprimentos e finitude e retornam `(valor, error)`. O R² de uma amostra é NaN. Para alvo constante, segue o comportamento finito padrão do scikit-learn: 1 para predição perfeita e 0 para predição imperfeita.
@@ -60,6 +62,10 @@ if err != nil {
 
 O artefato serializa os parâmetros ajustados. A semente e os dados de treino não são necessários para predição.
 
+## Exemplos executáveis
+
+Os fluxos completos de regressão, classificação binária e validação cruzada estão em [`examples/`](../examples/README.md). Esse catálogo deve ser revisado e iterado a cada feature, conforme os [critérios de validação](specs/02-testes-validacao.md#exemplos-de-uso).
+
 ## Validação e comparação
 
 - `go test ./...` cobre contratos públicos, erros, cálculo manual, atomicidade de ajuste, integração do pipeline, persistência e leitura de fixture.
@@ -69,7 +75,7 @@ O artefato serializa os parâmetros ajustados. A semente e os dados de treino n�
 
 ## Fora do escopo atual
 
-Regressão com múltiplas saídas ou pesos, classificação multiclasse, persistência de classificadores, validação cruzada, dados esparsos, imputação, NaN em estimadores, otimização por BLAS, importação de formatos Python e API pública de busca/tuning ainda não estão implementados. As specs em [`docs/specs/`](README.md) definem a sequência proposta para essas extensões.
+Regressão com múltiplas saídas ou pesos, classificação multiclasse, persistência de classificadores, estratificação em folds, dados esparsos, imputação, NaN em estimadores, otimização por BLAS, importação de formatos Python e API pública de busca/tuning ainda não estão implementados. As specs em [`docs/specs/`](README.md) definem a sequência proposta para essas extensões.
 
 
 ## Classificação binária

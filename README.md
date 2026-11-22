@@ -57,7 +57,7 @@ import (
 )
 ```
 
-Consulte [a documentação da implementação](docs/implementacao.md), [as specs](docs/README.md) e a [matriz de compatibilidade](docs/compatibilidade.md) para contratos, limites, persistência e benchmarks.
+Consulte os [exemplos documentados](examples/README.md), [a documentação da implementação](docs/implementacao.md), [as specs](docs/README.md) e a [matriz de compatibilidade](docs/compatibilidade.md) para fluxos, contratos, limites, persistência e benchmarks.
 
 ## Verificação
 

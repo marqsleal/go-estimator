@@ -15,3 +15,7 @@ Usar `testing`, exemplos executáveis e dados em `testdata/`, sem bibliotecas ex
 ## Critério de conclusão por recurso
 
 API e defaults documentados; testes públicos e de erro passando; comparação com referência para casos suportados; divergências registradas; exemplos executáveis; revisão de estabilidade numérica. Uma matriz de compatibilidade deve acompanhar cada recurso e identificar versão, opções suportadas e pendências.
+
+## Exemplos de uso
+
+Manter [`examples/`](../../examples/README.md) como catálogo documentado dos fluxos públicos. Ao implementar ou alterar uma feature, revisar o catálogo e os exemplos executáveis relacionados no mesmo change. Atualizar o exemplo existente para mostrar a nova API ou comportamento; quando surgir um fluxo distinto, adicionar outro exemplo com explicação no índice. Exemplos devem usar APIs públicas, rodar sem Python ou rede e compilar como parte da validação normal (`go test ./...` e `go run` dos fluxos relevantes).
