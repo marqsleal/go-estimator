@@ -14,13 +14,17 @@ import (
 	"go-learn/preprocessing"
 )
 
+// randomState fixa a ordem dos folds para repetir este experimento.
+const randomState uint64 = 11
+
 func main() {
 	xRegression, err := matrix.NewDenseFromRows([][]float64{{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}})
 	if err != nil {
 		log.Fatal(err)
 	}
 	yRegression := []float64{1, 3, 5, 7, 9, 11, 13, 15}
-	seed := uint64(11)
+	seed := randomState
+	// Cada fold cria e ajusta um pipeline independente para calcular R².
 	regressionScores, err := model_selection.CrossValScore(xRegression, yRegression, 4,
 		func() pipeline.Regressor {
 			model, err := pipeline.NewRegressionPipeline(
@@ -41,6 +45,7 @@ func main() {
 		log.Fatal(err)
 	}
 	yClassification := []int{0, 0, 0, 0, 1, 1, 1, 1}
+	// A classificação também recebe um pipeline novo por fold e pontua acurácia.
 	classificationScores, err := model_selection.CrossValClassificationScore(xClassification, yClassification, 4,
 		func() pipeline.Classifier {
 			model, err := pipeline.NewClassificationPipeline(

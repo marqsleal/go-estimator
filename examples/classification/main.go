@@ -14,14 +14,19 @@ import (
 	"go-learn/preprocessing"
 )
 
+// randomState fixa a partição deste exemplo para que a execução seja repetível.
+const randomState uint64 = 3
+
 func main() {
 	x, err := matrix.NewDenseFromRows([][]float64{{-4}, {-3}, {-2}, {-1}, {1}, {2}, {3}, {4}})
 	if err != nil {
 		log.Fatal(err)
 	}
 	y := []int{0, 0, 0, 0, 1, 1, 1, 1}
+	// TrainTestSplit recebe alvos float64. Mantemos os rótulos inteiros originais
+	// e usamos os índices retornados para reconstruir y de treino e teste.
 	split, err := model_selection.TrainTestSplit(x, toFloatTargets(y),
-		model_selection.WithTestSize(0.25), model_selection.WithRandomState(3))
+		model_selection.WithTestSize(0.25), model_selection.WithRandomState(randomState))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -33,6 +38,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// O scaler e o classificador são ajustados apenas com a partição de treino.
 	model, err := pipeline.NewClassificationPipeline(
 		[]pipeline.Step{{Name: "scale", New: func() pipeline.Transformer { return preprocessing.NewStandardScaler() }}},
 		func() pipeline.Classifier { return linear_model.NewLogisticRegression() },
@@ -51,6 +57,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// As métricas comparam os rótulos de teste às previsões do modelo.
 	accuracy, err := metrics.AccuracyScore(testLabels, predictions)
 	if err != nil {
 		log.Fatal(err)
@@ -72,6 +79,7 @@ func main() {
 }
 
 func toFloatTargets(values []int) []float64 {
+	// A conversão existe só para obter a mesma permutação de índices do split.
 	converted := make([]float64, len(values))
 	for i, value := range values {
 		converted[i] = float64(value)
@@ -80,6 +88,7 @@ func toFloatTargets(values []int) []float64 {
 }
 
 func selectIntTargets(values []int, indices []int) ([]int, error) {
+	// Seleciona os rótulos usando os índices aplicados às linhas de X.
 	selected := make([]int, len(indices))
 	for i, index := range indices {
 		if index < 0 || index >= len(values) {

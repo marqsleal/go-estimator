@@ -57,7 +57,7 @@ import (
 )
 ```
 
-Consulte os [exemplos documentados](examples/README.md), [a documentação da implementação](docs/implementacao.md), [as specs](docs/README.md) e a [matriz de compatibilidade](docs/compatibilidade.md) para fluxos, contratos, limites, persistência e benchmarks.
+Os [exemplos documentados](examples/README.md) mostram regressão, classificação binária e validação cruzada. Cada fluxo fixa sua seed localmente para repetir a partição ou os folds na implementação Go. Consulte esse guia para os comandos de execução, detalhes de alinhamento dos rótulos e limites de reprodutibilidade. A [documentação da implementação](docs/implementacao.md), as [specs](docs/README.md) e a [matriz de compatibilidade](docs/compatibilidade.md) descrevem os contratos e as diferenças suportadas.
 
 ## Verificação
 

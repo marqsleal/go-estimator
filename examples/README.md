@@ -1,18 +1,36 @@
 # Exemplos de uso
 
-Esta pasta reúne fluxos completos e executáveis da biblioteca. Cada exemplo explica a sequência de preparação dos dados, ajuste e avaliação e pode ser executado a partir da raiz do módulo.
+Esta pasta apresenta três experimentos completos da biblioteca. Cada programa constrói dados pequenos em memória, prepara as partições, ajusta um estimador e calcula resultados. Não é necessário baixar datasets ou instalar dependências.
+
+## Reprodutibilidade
+
+Cada programa declara sua própria constante `randomState` perto do início do arquivo. A seed fixa a partição ou a ordem dos folds, permitindo repetir a execução com a mesma versão da biblioteca e os mesmos dados. Os exemplos não compartilham uma constante entre arquivos porque cada fluxo representa um experimento independente e pode ser alterado sem mudar os demais.
+
+A seed do Go garante repetibilidade dentro desta implementação. Ela não promete gerar os mesmos índices que NumPy ou scikit-learn para o mesmo número. Para reproduzir resultados de outro sistema, compare ou persista os índices usados, além dos dados e parâmetros.
+
+## Fluxos disponíveis
+
+### Regressão
+
+[regression/main.go](regression/main.go) divide X e y em treino e teste usando `TrainTestSplit`. O pipeline ajusta `StandardScaler` e `LinearRegression` somente no treino. Em seguida, prevê no teste e calcula MSE e R². Esse fluxo demonstra a separação entre ajuste e avaliação e evita que o scaler aprenda estatísticas do conjunto de teste.
+
+### Classificação binária
+
+[classification/main.go](classification/main.go) divide as linhas com `TrainTestSplit` e aplica os índices retornados aos rótulos inteiros. O split atual recebe alvos `float64`, então o exemplo converte os rótulos apenas para obter os mesmos índices e preserva `[]int` no ajuste e nas métricas. O pipeline ajusta `StandardScaler` e `LogisticRegression`, depois calcula previsões, probabilidades, acurácia, precisão, recall e matriz de confusão no teste. A precisão e o recall usam explicitamente a classe `1` como positiva.
+
+### Validação cruzada
+
+[cross_validation/main.go](cross_validation/main.go) calcula R² para regressão e acurácia para classificação. Cada chamada usa quatro folds embaralhados. As fábricas criam pipelines novos em cada fold, e o scaler de cada pipeline aprende somente com as linhas de treino daquele fold. Os resultados são apresentados por fold, sem agregação, para que a variação entre partições fique visível.
+
+## Executar
+
+Execute estes comandos na raiz do repositório. Cada um imprime as métricas ou pontuações produzidas pelo fluxo.
 
 ```sh
 go run ./examples/regression
 go run ./examples/classification
 go run ./examples/cross_validation
 ```
-
-## Fluxos disponíveis
-
-- [Regressão](regression/main.go): divide os dados, ajusta `StandardScaler` e `LinearRegression` em um pipeline, prevê no conjunto de teste e calcula MSE e R².
-- [Classificação binária](classification/main.go): ajusta scaler e `LogisticRegression`, prevê rótulos e probabilidades e calcula acurácia, precisão, recall e matriz de confusão.
-- [Validação cruzada](cross_validation/main.go): avalia pipelines de regressão e classificação com folds independentes e semente fixa.
 
 ## Manutenção
 
