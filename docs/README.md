@@ -32,6 +32,6 @@ O roteiro apresenta as entregas. Os critérios de teste se aplicam desde a funda
 - **Versão Go:** mínimo declarado `go 1.22`; validado localmente com Go 1.26.1.
 - **Diretriz:** manter nomes conceituais e defaults Python; adaptar exportação, tipos estáticos e erros às regras do Go. Definir nomes de pacotes Go concretos na primeira implementação e registrar divergências, inclusive quando não preservarem underscores Python.
 - **Benchmarks:** implementados em `benchmarks/`; a comparação com scikit-learn é externa. A baseline inicial está documentada.
-- **Primeiro fluxo implementado:** dados densos `float64` e regressão de saída única. Classificação binária e outros recursos continuam pendentes.
+- **Primeiro fluxo implementado:** dados densos `float64` e regressão de saída única. Classificação binária com LogisticRegression, métricas e pipeline também está implementada. Validação cruzada é a próxima etapa.
 - **Dados e concorrência:** contratos públicos devem descrever cópia, aliasing, mutação e segurança concorrente; `Fit` muta o estimador e não é concorrente por padrão.
 - **Paridade aleatória:** mesma semente não garante a mesma sequência entre Go e NumPy. Só prometer paridade exata se o gerador e o algoritmo forem compatíveis e testados; caso contrário documentar a diferença.

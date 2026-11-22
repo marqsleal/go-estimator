@@ -6,7 +6,7 @@ Cada etapa entrega uma fatia utilizável e só passa à próxima após cumprir o
 2. **Concluído — primeiro fluxo de regressão:** StandardScaler, LinearRegression, divisão com `random_state`, MAE/MSE/R², pipeline, exemplo completo, fixture scikit-learn 1.9.1 e [matriz de compatibilidade](../compatibilidade.md).
 3. **Concluído — persistência:** JSON próprio v1 e ciclo de salvar, carregar e prever conforme a [spec](09-persistencia.md).
 4. **Concluído — primeira medição:** benchmarks Go em `benchmarks/`, baseline reproduzível e comparação externa com scikit-learn. O QR puro em Go é o gargalo de treino para a carga maior; qualquer otimização deve preservar o contrato numérico.
-5. **Classificação binária:** especificar solver e limites de compatibilidade, implementar LogisticRegression e métricas associadas, ampliar composição e fixtures.
+5. **Concluído — classificação binária:** LogisticRegression com Newton e L2, métricas de classificação, pipeline com rótulos inteiros e fixture scikit-learn 1.9.1. Persistência de classificação exige uma extensão futura do formato.
 6. **Validação de modelos:** KFold e cross-validation com instâncias independentes e prevenção de vazamento. Definir API de criação/cópia de estimadores usando necessidades reais.
 7. **Expansão:** priorizar outras famílias, suporte esparso e seleção de hiperparâmetros com specs próprias e evidência de necessidade.
 

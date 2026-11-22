@@ -7,8 +7,9 @@ Fornecer avaliação e divisão dos dados com nomes e semântica familiares ao s
 ## metrics
 
 - Primeira entrega: `mean_absolute_error`, `mean_squared_error` e `r2_score`, com equivalentes Go exportados. Definir política de opções e valores padrão conforme a versão de referência; documentar limitações como pesos e múltiplas saídas.
-- Classificação posterior: `accuracy_score`, `precision_score`, `recall_score` e `confusion_matrix` para rótulos binários, incluindo ordenação, classe positiva e divisões por zero.
-- Testar valores calculados à mão, vetores inválidos, dados não finitos, previsão perfeita, alvo constante e R² com uma amostra, incluindo comportamento explícito de `force_finite` se suportado. Confrontar casos equivalentes com fixtures Python.
+- Classificação: `AccuracyScore(yTrue, yPred []int)`, `PrecisionScore(yTrue, yPred []int, positiveLabel int)`, `RecallScore(yTrue, yPred []int, positiveLabel int)` e `ConfusionMatrix(yTrue, yPred []int) ([][]int, []int, error)`. A matriz inclui as classes observadas em `yTrue` ou `yPred`, ordenadas em ordem crescente; linhas são classes verdadeiras e colunas classes previstas. Precision/recall exigem rótulo positivo explícito. Se o denominador for zero, retornam zero, equivalente a configurar `zero_division=0` explicitamente na referência. As três métricas são binárias quando usadas com `LogisticRegression`, enquanto a matriz aceita quaisquer rótulos inteiros observados.
+- Todas as métricas de classificação rejeitam vetores vazios ou comprimentos diferentes. Precision e recall também rejeitam `positiveLabel` ausente de ambos os vetores, para evitar um resultado silencioso. `AccuracyScore` é proporção correta em `[0,1]`.
+- Testar valores calculados à mão, vetores inválidos, dados não finitos, previsão perfeita, alvo constante e R² com uma amostra, incluindo comportamento explícito de `force_finite` se suportado. Para classificação, cobrir ordem dos rótulos, positivo explícito, denominadores zero e labels observadas só na predição. Confrontar casos equivalentes com fixtures Python.
 
 ## model_selection
 

@@ -69,4 +69,17 @@ O artefato serializa os parâmetros ajustados. A semente e os dados de treino n�
 
 ## Fora do escopo atual
 
-Classificação, regressão com múltiplas saídas ou pesos, `LogisticRegression`, validação cruzada, dados esparsos, imputação, NaN em estimadores, otimização por BLAS, importação de formatos Python e API pública de busca/tuning ainda não estão implementados. As specs em [`docs/specs/`](README.md) definem a sequência proposta para essas extensões.
+Regressão com múltiplas saídas ou pesos, classificação multiclasse, persistência de classificadores, validação cruzada, dados esparsos, imputação, NaN em estimadores, otimização por BLAS, importação de formatos Python e API pública de busca/tuning ainda não estão implementados. As specs em [`docs/specs/`](README.md) definem a sequência proposta para essas extensões.
+
+
+## Classificação binária
+
+`linear_model.NewLogisticRegression` aceita `WithC`, `WithLogisticFitIntercept`, `WithTolerance` e `WithMaxIterations`. Os defaults são C=1, intercepto habilitado, tolerância de gradiente 1e-6 e até 100 passos Newton. `Fit` recebe `[]int` com duas classes. `Classes` devolve os rótulos ordenados e `PredictProba` devolve duas colunas nessa ordem. `Score` calcula acurácia. Erros de convergência preservam o ajuste anterior e permitem `errors.Is(err, linear_model.ErrConvergence)`.
+
+O solver usa Hessiana densa e Cholesky com busca Armijo. A regularização L2 penaliza os coeficientes e o intercepto é livre. O custo por iteração é quadrático no número de características para montar a Hessiana e cúbico para fatorá-la. A tolerância de gradiente e o solver seguem a spec própria.
+
+`metrics` oferece `AccuracyScore`, `PrecisionScore`, `RecallScore` e `ConfusionMatrix`. Precision e recall recebem o rótulo positivo como terceiro argumento. A matriz retorna contagens e os rótulos ordenados dos eixos.
+
+`pipeline.NewClassificationPipeline` recebe as mesmas etapas transformadoras da regressão e uma fábrica `func() pipeline.Classifier`. Oferece `Fit`, `Predict`, `PredictProba`, `Classes`, `Score` e `Fitted`. Cada ajuste usa instâncias novas e publica o estado após concluir todas as etapas. O exemplo executável em `pipeline/classification_test.go` mostra treino e predição em dados distintos.
+
+A fixture estática de classificação usa o scikit-learn 1.9.1 local como referência externa. A suíte Go lê o JSON. Os testes cobrem derivadas numéricas, integração com scaler, falha de ajuste e dados inválidos.
