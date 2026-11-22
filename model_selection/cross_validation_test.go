@@ -100,6 +100,51 @@ func TestCrossValScoreRegressionCreatesFreshPipelines(t *testing.T) {
 	}
 }
 
+type meanRecordingTransformer struct{ mean float64 }
+
+func (s *meanRecordingTransformer) Fit(x *matrix.Dense) error {
+	for row := 0; row < x.Rows(); row++ {
+		s.mean += x.At(row, 0) / float64(x.Rows())
+	}
+	return nil
+}
+
+func (s *meanRecordingTransformer) Transform(x *matrix.Dense) (*matrix.Dense, error) {
+	return x.Clone(), nil
+}
+
+func TestCrossValFitsTransformersOnlyOnTrainingRows(t *testing.T) {
+	x, _ := matrix.NewDenseFromRows([][]float64{{0}, {2}, {10}, {12}, {20}, {22}})
+	y := []float64{0, 2, 10, 12, 20, 22}
+	var scalers []*meanRecordingTransformer
+	_, err := model_selection.CrossValScore(x, y, 3, func() pipeline.Regressor {
+		p, err := pipeline.NewRegressionPipeline(
+			[]pipeline.Step{{Name: "record", New: func() pipeline.Transformer {
+				scaler := &meanRecordingTransformer{}
+				scalers = append(scalers, scaler)
+				return scaler
+			}}},
+			func() pipeline.Regressor { return linear_model.NewLinearRegression() },
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return p
+	}, false, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	wantMeans := []float64{16, 11, 6}
+	if len(scalers) != len(wantMeans) {
+		t.Fatalf("created %d scalers, want %d", len(scalers), len(wantMeans))
+	}
+	for i, scaler := range scalers {
+		if scaler.mean != wantMeans[i] {
+			t.Errorf("fold %d scaler mean=%g, want %g", i, scaler.mean, wantMeans[i])
+		}
+	}
+}
+
 func TestCrossValClassificationScoreAndFoldError(t *testing.T) {
 	x, _ := matrix.NewDenseFromRows([][]float64{{-4}, {-3}, {-2}, {-1}, {1}, {2}, {3}, {4}})
 	y := []int{0, 1, 0, 1, 0, 1, 0, 1}
