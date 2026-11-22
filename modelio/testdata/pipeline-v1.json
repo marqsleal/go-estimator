@@ -1,0 +1,1 @@
+{"format":"go-learn","version":1,"kind":"regression_pipeline","n_features":1,"steps":[{"name":"scale","type":"standard_scaler","with_mean":true,"with_std":true,"mean":[1.5],"variance":[1.25],"scale":[1.118033988749895]}],"regressor":{"type":"linear_regression","fit_intercept":true,"coefficients":[2.23606797749979],"intercept":4}}
