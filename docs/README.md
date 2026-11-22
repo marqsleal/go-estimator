@@ -23,6 +23,7 @@ O roteiro apresenta as entregas. Os critérios de teste e manutenção dos [exem
 - [08 · pipeline](specs/08-pipeline.md)
 - [09 · Salvar e carregar modelos para inferência](specs/09-persistencia.md)
 - [10 · Benchmarks de comparação com scikit-learn](specs/10-benchmarks.md)
+- [11 · Carregamento de dados tabulares](specs/11-carregamento-dados.md)
 - [Matriz de compatibilidade inicial](compatibilidade.md)
 - [Implementação atual](implementacao.md)
 - [Exemplos documentados dos fluxos](../examples/README.md)
@@ -34,5 +35,6 @@ O roteiro apresenta as entregas. Os critérios de teste e manutenção dos [exem
 - **Diretriz:** manter nomes conceituais e defaults Python; adaptar exportação, tipos estáticos e erros às regras do Go. Definir nomes de pacotes Go concretos na primeira implementação e registrar divergências, inclusive quando não preservarem underscores Python.
 - **Benchmarks:** implementados em `benchmarks/`; a comparação com scikit-learn é externa. A baseline inicial está documentada.
 - **Fluxos implementados:** regressão de saída única, classificação binária e validação cruzada estão disponíveis. Consulte os exemplos para ver o uso ponta a ponta.
+- **Requisito futuro:** ler e gravar dados tabulares em CSV, Parquet e JSON, convertendo-os em matrizes e alvos. Integrações SQL ficam fora do escopo por dependerem de bibliotecas e drivers externos. Consulte a [spec de dados tabulares](specs/11-carregamento-dados.md).
 - **Dados e concorrência:** contratos públicos devem descrever cópia, aliasing, mutação e segurança concorrente; `Fit` muta o estimador e não é concorrente por padrão.
 - **Paridade aleatória:** mesma semente não garante a mesma sequência entre Go e NumPy. Só prometer paridade exata se o gerador e o algoritmo forem compatíveis e testados; caso contrário documentar a diferença.
