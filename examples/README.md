@@ -10,6 +10,14 @@ A seed do Go garante repetibilidade dentro desta implementação. Ela não prome
 
 ## Fluxos disponíveis
 
+### Leitura e gravação CSV
+
+[tabular_csv/main.go](tabular_csv/main.go) carrega uma matriz numérica CSV de uma string local, executa um pipeline de regressão e grava as previsões em CSV e JSON. As APIs recebem `io.Reader` e `io.Writer`, então o chamador mantém controle dos arquivos e demais recursos. JSON usa uma matriz de arrays numéricos, por exemplo `[[1,2],[3,4]]`.
+
+### Tabela nomeada
+
+[tabular_table/main.go](tabular_table/main.go) carrega CSV com cabeçalho, seleciona características e alvo pelo nome, treina regressão e grava previsões em CSV e JSON nomeado. Recebe um arquivo CSV local com colunas area, rooms e price e grava uma previsão por linha no arquivo de saída.
+
 ### Regressão
 
 [regression/main.go](regression/main.go) divide X e y em treino e teste usando `TrainTestSplit`. O pipeline ajusta `StandardScaler` e `LinearRegression` somente no treino. Em seguida, prevê no teste e calcula MSE e R². Esse fluxo demonstra a separação entre ajuste e avaliação e evita que o scaler aprenda estatísticas do conjunto de teste.
@@ -30,6 +38,8 @@ Execute estes comandos na raiz do repositório. Cada um imprime as métricas ou 
 go run ./examples/regression
 go run ./examples/classification
 go run ./examples/cross_validation
+go run ./examples/tabular_csv
+go run ./examples/tabular_table entrada.csv previsoes.csv
 ```
 
 ## Manutenção

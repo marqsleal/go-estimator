@@ -1,6 +1,6 @@
 # go-learn
 
-Biblioteca Go de aprendizado de máquina clássico com uma API inspirada no scikit-learn. A primeira versão cobre matrizes densas `float64`, `StandardScaler`, divisão treino/teste, métricas de regressão, `LinearRegression`, pipeline e persistência JSON para inferência de regressão. Também oferece classificação binária com `LogisticRegression`, métricas e pipeline de classificação. Produção e validação obrigatória dependem apenas da biblioteca padrão do Go.
+Biblioteca Go de aprendizado de máquina clássico com uma API inspirada no scikit-learn. A primeira versão cobre matrizes densas `float64`, `StandardScaler`, divisão treino/teste, métricas de regressão, `LinearRegression`, pipeline e persistência JSON para inferência de regressão. Também oferece classificação binária com `LogisticRegression`, métricas e pipeline de classificação. O módulo requer Go 1.26.0. O pacote tabular usa parquet-go para Parquet e a biblioteca padrão para CSV e JSON.
 
 Python e scikit-learn são referências externas para compatibilidade e fixtures. O projeto não incorpora nem executa Python.
 

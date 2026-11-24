@@ -1,7 +1,10 @@
 package model_selection_test
 
 import (
+	"encoding/json"
 	"errors"
+	"math"
+	"os"
 	"reflect"
 	"testing"
 
@@ -141,6 +144,86 @@ func TestCrossValFitsTransformersOnlyOnTrainingRows(t *testing.T) {
 	for i, scaler := range scalers {
 		if scaler.mean != wantMeans[i] {
 			t.Errorf("fold %d scaler mean=%g, want %g", i, scaler.mean, wantMeans[i])
+		}
+	}
+}
+
+func TestCrossValClassificationFitsTransformersOnlyOnTrainingRows(t *testing.T) {
+	x, _ := matrix.NewDenseFromRows([][]float64{{0}, {2}, {10}, {12}, {20}, {22}})
+	y := []int{0, 1, 0, 1, 0, 1}
+	var transformers []*meanRecordingTransformer
+	_, err := model_selection.CrossValClassificationScore(x, y, 3, func() pipeline.Classifier {
+		p, buildErr := pipeline.NewClassificationPipeline([]pipeline.Step{{Name: "record", New: func() pipeline.Transformer {
+			transformer := &meanRecordingTransformer{}
+			transformers = append(transformers, transformer)
+			return transformer
+		}}}, func() pipeline.Classifier { return linear_model.NewLogisticRegression() })
+		if buildErr != nil {
+			t.Fatal(buildErr)
+		}
+		return p
+	}, false, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i, want := range []float64{16, 11, 6} {
+		if transformers[i].mean != want {
+			t.Errorf("fold %d mean=%g, want %g", i, transformers[i].mean, want)
+		}
+	}
+}
+
+func TestCrossValScoresMatchScikitLearnFixture(t *testing.T) {
+	type fixture struct {
+		X   [][]float64 `json:"X"`
+		YR  []float64   `json:"y_regression"`
+		YC  []int       `json:"y_classification"`
+		Reg []float64   `json:"regression_scores"`
+		Cls []float64   `json:"classification_scores"`
+	}
+	content, err := os.ReadFile("../testdata/scikit-learn-1.9.1-cross-validation.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var data fixture
+	if err := json.Unmarshal(content, &data); err != nil {
+		t.Fatal(err)
+	}
+	x, err := matrix.NewDenseFromRows(data.X)
+	if err != nil {
+		t.Fatal(err)
+	}
+	reg, err := model_selection.CrossValScore(x, data.YR, 3, func() pipeline.Regressor {
+		p, buildErr := pipeline.NewRegressionPipeline([]pipeline.Step{{Name: "scale", New: func() pipeline.Transformer { return preprocessing.NewStandardScaler() }}}, func() pipeline.Regressor { return linear_model.NewLinearRegression() })
+		if buildErr != nil {
+			t.Fatal(buildErr)
+		}
+		return p
+	}, false, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cls, err := model_selection.CrossValClassificationScore(x, data.YC, 3, func() pipeline.Classifier {
+		p, buildErr := pipeline.NewClassificationPipeline([]pipeline.Step{{Name: "scale", New: func() pipeline.Transformer { return preprocessing.NewStandardScaler() }}}, func() pipeline.Classifier { return linear_model.NewLogisticRegression() })
+		if buildErr != nil {
+			t.Fatal(buildErr)
+		}
+		return p
+	}, false, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, pair := range []struct {
+		name      string
+		got, want []float64
+	}{{"R2", reg, data.Reg}, {"accuracy", cls, data.Cls}} {
+		if len(pair.got) != len(pair.want) {
+			t.Fatalf("%s folds=%d want %d", pair.name, len(pair.got), len(pair.want))
+		}
+		for i, v := range pair.got {
+			if math.IsNaN(v) || math.IsInf(v, 0) || math.Abs(v-pair.want[i]) > 1e-10 {
+				t.Errorf("%s fold %d=%g want %g", pair.name, i, v, pair.want[i])
+			}
 		}
 	}
 }
